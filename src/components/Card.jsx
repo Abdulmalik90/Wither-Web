@@ -9,9 +9,13 @@ import Button from '@mui/material/Button';
 // other imports
 import axios from "axios";
 import { apiKey } from "../contexts/apiContext";
-
+import moment from "moment";
+import "moment/locale/ar"; // ✅ Add this
+import { useTranslation } from 'react-i18next';
 
 let cancelAxios = null
+
+moment.locale("ar");
 export default function Card(){
     const [temp, setTemp] = useState({
         current: null,
@@ -20,7 +24,12 @@ export default function Card(){
     })
     const [weather, setWeather] = useState({description: "", icon: ""});
 
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const arabicDate = new Date().toLocaleDateString('ar-SA', options);
+    const [date, setDate] = useState(arabicDate);
+    const { t, i18n } = useTranslation();
     
+
     // getting the wither by api
     useEffect(()=>{
         axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=26.425699&lon=50.055164&appid=${apiKey}`, {
@@ -54,6 +63,8 @@ export default function Card(){
             // always executed
         });
 
+        i18n.changeLanguage("ar");
+
         return ()=> {
             cancelAxios();
         }
@@ -71,11 +82,11 @@ export default function Card(){
                         {/* City & Time */}
                         <div style={{display: "flex", alignItems: "end", justifyContent: "start"}} dir="rtl">
                             <Typography variant="h1" style={{marginRight: "20px", fontWeight: "400"}}>
-                                الدمام
+                                {t("city")}
                             </Typography>
 
                             <Typography variant="h5" style={{marginRight: "20px"}} >
-                                9 إبريل 2026
+                                {date}
                             </Typography>
                         </div>
 
@@ -90,7 +101,7 @@ export default function Card(){
                                     <Typography variant="h1" style={{textAlign: "right"}} >
                                         {temp.current}
                                     </Typography>
-                                    {/* TODO: Sky Image */}
+                                    {/*  Sky Image */}
                                     <img src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`} alt="" />
                                 </div>
                                 {/* // Temperature // */}
@@ -101,9 +112,9 @@ export default function Card(){
 
                                 {/* Min & Max */}
                                 <div style={{display:"flex", justifyContent: "space-between", alignItems: "center"}}>
-                                    <h5 >الصغرى: {temp.min}</h5>
+                                    <h5 >{t("min")}: {temp.min}</h5>
                                     <h5 >|</h5>
-                                    <h5>الكبرى: {temp.max}</h5>
+                                    <h5>{t("max")}: {temp.max}</h5>
                                 </div>
                             </div>
 

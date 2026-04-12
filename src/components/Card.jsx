@@ -8,7 +8,7 @@ import CloudIcon from '@mui/icons-material/Cloud';
 import Button from '@mui/material/Button';
 // other imports
 import axios from "axios";
-import { apiKey } from "../contexts/apiContext";
+
 import moment from "moment";
 import "moment/locale/ar"; // ✅ Add this
 import { useTranslation } from 'react-i18next';
@@ -53,7 +53,7 @@ export default function Card(){
 
     // getting the wither by api
     useEffect(()=>{
-        axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=26.425699&lon=50.055164&appid=${apiKey}&lang=${i18n.language}`, {
+        axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=26.425699&lon=50.055164&appid=${import.meta.env.VITE_WEATHER_API_KEY}&lang=${i18n.language}`, {
             cancelToken: new axios.CancelToken((c)=>{
                 cancelAxios = c;
             })

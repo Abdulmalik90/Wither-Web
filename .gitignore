@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Ignore API key file
-apiContext.js
+.env

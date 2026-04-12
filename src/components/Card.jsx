@@ -26,13 +26,34 @@ export default function Card(){
 
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const arabicDate = new Date().toLocaleDateString('ar-SA', options);
+    const englishDate = new Date().toLocaleDateString('en', options);
     const [date, setDate] = useState(arabicDate);
     const { t, i18n } = useTranslation();
+    const [direction, setDirection] = useState("rtl");
+
+    // ============== Events Handlers ================ //
+    function handleLanguageClick(){
+        
+        if (i18n.language === "en"){
+            i18n.changeLanguage("ar");
+            setDate(arabicDate)
+            setDirection("rtl")
+        } else {
+            i18n.changeLanguage("en");
+            setDate(englishDate)
+            setDirection("ltr")
+        }
+
+        
+        
+    }
+
+    
     
 
     // getting the wither by api
     useEffect(()=>{
-        axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=26.425699&lon=50.055164&appid=${apiKey}`, {
+        axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=26.425699&lon=50.055164&appid=${apiKey}&lang=${i18n.language}`, {
             cancelToken: new axios.CancelToken((c)=>{
                 cancelAxios = c;
             })
@@ -63,26 +84,33 @@ export default function Card(){
             // always executed
         });
 
-        i18n.changeLanguage("ar");
-
+        
+        
+        
         return ()=> {
             cancelAxios();
         }
-    },[]);
+    },[i18n.language]);
+
+    // firs load of the page is arabic
+    useEffect(()=>{i18n.changeLanguage("ar");}, []);
+
+        
+
     return (
         <Container maxWidth="sm">
             {/* Content Container */}
             <div style={{height: "100vh", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
 
                 {/* Card */}
-                <div dir="rtl" style={{background: "rgb(28 52 91 / 36%)", width: "100%", padding: "10px", borderRadius: "15px", boxShadow: "0px 11px 1px rgba(0, 0, 0, 0.05)"}}>
+                <div dir={direction} style={{background: "rgb(28 52 91 / 36%)", width: "100%", padding: "10px", borderRadius: "15px", boxShadow: "0px 11px 1px rgba(0, 0, 0, 0.05)"}}>
 
                     {/* Content */}
                     <div>
                         {/* City & Time */}
                         <div style={{display: "flex", alignItems: "end", justifyContent: "start"}} dir="rtl">
                             <Typography variant="h1" style={{marginRight: "20px", fontWeight: "400"}}>
-                                {t("city")}
+                                {t("dammam")}
                             </Typography>
 
                             <Typography variant="h5" style={{marginRight: "20px"}} >
@@ -98,7 +126,7 @@ export default function Card(){
                             <div>
                                 {/* Temperature */}
                                 <div style={{display: "flex"}}>
-                                    <Typography variant="h1" style={{textAlign: "right"}} >
+                                    <Typography variant="h1" >
                                         {temp.current}
                                     </Typography>
                                     {/*  Sky Image */}
@@ -120,6 +148,7 @@ export default function Card(){
 
                             {/* // Degree & Description // */}
                             <CloudIcon style={{fontSize: "200px", color: "white"}}/>
+                            
 
                         </div>
                         {/* // Degree & Description & Icon container // */}
@@ -128,8 +157,8 @@ export default function Card(){
 
                 </div>
                 {/* Transilation Button Container */}
-                <div dir="rtl" style={{display: "flex", justifyContent: "end", width: "100%", marginTop: "20px"}}>
-                    <Button variant="text" style={{color: "white"}}>English</Button>
+                <div dir={direction} style={{display: "flex", justifyContent: "end", width: "100%", marginTop: "20px"}}>
+                    <Button variant="text" style={{color: "white"}} onClick={handleLanguageClick}>{t("language")}</Button>
 
                 </div>
             </div>
